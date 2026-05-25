@@ -62,17 +62,14 @@ Administrators communicate with the internal kernel operations via two primary o
 ---
 
 ## 📊 4. Structural Comparisons & Historical Lineage
+### Operating System Layers
 
-┌──────────────────────────────────────────────────────────┐
-│               User Applications / Shell                  │
-├──────────────────────────────────────────────────────────┤
-│           POSIX Compliant System Call API                │
-├──────────────────────────────────────────────────────────┤
-│                     Kernel Space                         │
-├──────────────────────────────────────────────────────────┤
-│                  Bare-Metal Hardware                     │
-└──────────────────────────────────────────────────────────┘
-
+| Layer | Component Name | Operational Scope & Function |
+| :---: | :--- | :--- |
+| **4** | **User Applications / Shell** | User-space processes, CLI shells, and high-level software interfaces. |
+| **3** | **POSIX Compliant System Call API** | The standardized abstract boundary translation interface. |
+| **2** | **Kernel Space** | Highly privileged core engine executing low-level system operations. |
+| **1** | **Bare-Metal Hardware** | Physical infrastructure (CPU execution blocks, RAM modules, and storage). |
 
 ### The Unix Evolution Framework
 * Many modern, sophisticated production operating systems were built following the architectural philosophy of the legacy **Unix** operating system. For example, Apple’s **macOS** is officially certified as a Unix system under the hood.
