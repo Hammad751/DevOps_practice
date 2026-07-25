@@ -1,69 +1,73 @@
-# Lesson 16: Shell Scripting II — Variables, Conditions, Loops & Functions
+# Lesson 16: Shell Scripting II — Variables, Conditionals, Loops & Functions
 
-> This lesson expands on the shell scripting fundamentals from Lesson 15, diving deeper into variables, conditional logic with file/number/string operators, positional parameters, loops, and functions with return values.
+> This lesson builds on the Shell Scripting fundamentals from Lesson 15, diving deeper into variables, conditional logic, user input, positional parameters, loops, and functions — the core building blocks of any real-world automation script.
 
 ---
 
 ## Table of Contents
 
 1. [Variables in Shell Scripts](#1-variables-in-shell-scripts)
-2. [Conditional Statements](#2-conditional-statements)
+2. [Conditional Statements — if/else](#2-conditional-statements--ifelse)
 3. [File Test Operators](#3-file-test-operators)
 4. [Number Comparison Operators](#4-number-comparison-operators)
 5. [String Operators](#5-string-operators)
 6. [User Input — Arguments & Prompts](#6-user-input--arguments--prompts)
 7. [Positional Parameters](#7-positional-parameters)
-8. [Loops](#8-loops)
+8. [Loops in Shell Scripts](#8-loops-in-shell-scripts)
 9. [Functions & Return Values](#9-functions--return-values)
-10. [Putting It All Together — Real Example](#10-putting-it-all-together--real-example)
-11. [Quick Reference Cheat Sheet](#11-quick-reference-cheat-sheet)
+10. [Double Brackets & Portability](#10-double-brackets--portability)
+11. [Complete Example Script](#11-complete-example-script)
+12. [Quick Reference Cheat Sheet](#12-quick-reference-cheat-sheet)
 
 ---
 
 ## 1. Variables in Shell Scripts
 
-### Declaring & Using Variables
+### Declaring Variables
 
 ```bash
-#!/bin/bash
-
-# Declare a variable — NO spaces around the = sign
+# No spaces around the = sign — this is mandatory
 file_name="config.yaml"
-user_name="hammad"
+user_name="alice"
+port=8080
 
-# Use a variable with the $ prefix
-echo "Config file is: $file_name"
-echo "User is: $user_name"
+# WRONG — will throw an error
+file_name = "config.yaml"   # spaces not allowed
 ```
 
-> **Rule:** There must be **no spaces** around the `=` sign when assigning variables.
-> - ✅ `file_name="config.yaml"`
-> - ❌ `file_name = "config.yaml"` → Shell interprets this as a command, not assignment
+### Using Variables
+
+```bash
+# Reference a variable with the $ sign
+echo "Config file is $file_name"
+echo "User: $user_name running on port $port"
+```
 
 ### Capturing Command Output into a Variable
 
-Use `$( )` to run a command and store its output directly into a variable:
+Use `$()` to run a command and store its output directly in a variable:
 
 ```bash
-# Store the output of 'ls config' into a variable
+# Store the output of the ls command into a variable
 config_file=$(ls config)
 
 # Store current date
 today=$(date)
 
-# Store current logged-in user
+# Store current user
 current_user=$(whoami)
 
 echo "Files in config: $config_file"
-echo "Today is: $today"
-echo "Running as: $current_user"
+echo "Script run by: $current_user on $today"
 ```
+
+> **Rule:** No spaces around `=`. Always wrap variable usage in double quotes (`"$var"`) to handle values that may contain spaces.
 
 ---
 
-## 2. Conditional Statements
+## 2. Conditional Statements — if/else
 
-### Basic `if / else / fi` Syntax
+### Basic Syntax
 
 ```bash
 if [ condition ]; then
@@ -73,9 +77,9 @@ else
 fi
 ```
 
-> **`fi`** closes every `if` block — it is `if` spelled backwards.
+> `fi` closes the `if` block — it is `if` spelled backwards.
 
-### Real Example — Check if Directory Exists
+### Real-World Example: Check if a Directory Exists
 
 ```bash
 #!/bin/bash
@@ -83,20 +87,20 @@ fi
 if [ -d "config" ]; then
     echo "Config directory found. Reading files..."
     config_file=$(ls config)
-    echo "Contents: $config_file"
+    echo "Files: $config_file"
 else
-    echo "Directory not found. Creating it now..."
+    echo "Config directory not found. Creating it..."
     mkdir config
-    echo "New config directory created."
+    echo "Directory created successfully."
 fi
 ```
 
-### `if / elif / else` — Multiple Conditions
+### if / elif / else
 
 ```bash
 #!/bin/bash
 
-score=85
+score=$1
 
 if [ $score -ge 90 ]; then
     echo "Grade: A"
@@ -105,7 +109,7 @@ elif [ $score -ge 75 ]; then
 elif [ $score -ge 60 ]; then
     echo "Grade: C"
 else
-    echo "Grade: F"
+    echo "Grade: F — Please retry."
 fi
 ```
 
@@ -113,61 +117,53 @@ fi
 
 ## 3. File Test Operators
 
-File test operators check the **properties of a file or directory** inside an `if` condition.
+File test operators check properties of files and directories inside `[ ]` conditions.
 
 | Operator | Meaning |
 |----------|---------|
-| `-d` | Is a **directory** |
-| `-f` | Is a regular **file** |
-| `-e` | **Exists** (file or directory) |
-| `-r` | Is **readable** |
-| `-w` | Is **writable** |
-| `-x` | Is **executable** |
-| `-s` | File exists and is **not empty** |
-| `-z` | File exists and is **empty** |
-| `!` | **Negation** — reverses the condition |
+| `-d file` | True if file is a directory |
+| `-f file` | True if file exists and is a regular file |
+| `-e file` | True if file exists (any type) |
+| `-r file` | True if file is readable |
+| `-w file` | True if file is writable |
+| `-x file` | True if file is executable |
+| `-s file` | True if file exists and is not empty |
+| `-z file` | True if file has zero size (is empty) |
+| `! -d file` | True if file does NOT exist as a directory |
 
 ```bash
-#!/bin/bash
-
-# Check if a file exists
-if [ -f "setup.sh" ]; then
-    echo "setup.sh exists."
+# Examples
+if [ -f "config.yaml" ]; then
+    echo "Config file exists."
 fi
 
-# Check if a path is a directory
-if [ -d "/etc/nginx" ]; then
-    echo "Nginx config directory exists."
-fi
-
-# Check if a file is executable
 if [ -x "deploy.sh" ]; then
-    echo "deploy.sh is executable."
+    echo "Script is executable."
 fi
 
-# Negation — check if something does NOT exist
 if [ ! -d "logs" ]; then
-    echo "Logs directory missing. Creating..."
     mkdir logs
+    echo "Logs directory created."
 fi
 ```
 
-> 📖 **Full list of file/test operators:** https://www.tutorialspoint.com/unix/unix-file-operators.htm
+> For a full list of test operators, refer to:
+> [Unix File & Test Operators — TutorialsPoint](https://www.tutorialspoint.com/unix/unix-file-operators.htm)
 
 ---
 
 ## 4. Number Comparison Operators
 
-In shell scripts, **keywords** are used instead of symbols like `>` or `==` for comparing numbers. This avoids conflicts with redirect operators.
+In shell scripting, use keyword operators instead of `<`, `>`, `==` for comparing numbers:
 
 | Operator | Meaning | Example |
 |----------|---------|---------|
 | `-eq` | Equal to | `[ $a -eq 10 ]` |
-| `-ne` | Not equal to | `[ $a -ne 10 ]` |
-| `-lt` | Less than | `[ $a -lt 10 ]` |
-| `-le` | Less than or equal to | `[ $a -le 10 ]` |
-| `-gt` | Greater than | `[ $a -gt 10 ]` |
-| `-ge` | Greater than or equal to | `[ $a -ge 10 ]` |
+| `-ne` | Not equal to | `[ $a -ne 0 ]` |
+| `-lt` | Less than | `[ $a -lt 100 ]` |
+| `-le` | Less than or equal | `[ $a -le 50 ]` |
+| `-gt` | Greater than | `[ $a -gt 0 ]` |
+| `-ge` | Greater than or equal | `[ $a -ge 18 ]` |
 
 ```bash
 #!/bin/bash
@@ -175,15 +171,15 @@ In shell scripts, **keywords** are used instead of symbols like `>` or `==` for 
 num=10
 
 if [ $num -eq 10 ]; then
-    echo "Number is exactly 10."
+    echo "Number is exactly 10"
 fi
 
 if [ $num -gt 5 ]; then
-    echo "Number is greater than 5."
+    echo "Number is greater than 5"
 fi
 
 if [ $num -ne 0 ]; then
-    echo "Number is not zero."
+    echo "Number is non-zero"
 fi
 ```
 
@@ -193,52 +189,35 @@ fi
 
 | Operator | Meaning | Example |
 |----------|---------|---------|
-| `=` | Equal (POSIX — works in all shells) | `[ "$a" = "hello" ]` |
-| `==` | Equal (Bash-specific) | `[ "$a" == "hello" ]` |
-| `!=` | Not equal | `[ "$a" != "hello" ]` |
-| `-z` | String is **empty** | `[ -z "$a" ]` |
-| `-n` | String is **not empty** | `[ -n "$a" ]` |
+| `=` | Equal — POSIX, portable across all shells | `[ "$a" = "hello" ]` |
+| `==` | Equal — Bash-specific | `[ "$a" == "hello" ]` |
+| `!=` | Not equal | `[ "$a" != "admin" ]` |
+| `-z "$a"` | String is empty | `[ -z "$user" ]` |
+| `-n "$a"` | String is NOT empty | `[ -n "$user" ]` |
 
 ```bash
 #!/bin/bash
 
-user_group="admin"
+user_group=$1
 
-# Bash-specific (==)
-if [ $user_group == "admin" ]; then
-    echo "Welcome, admin!"
-fi
-
-# POSIX-compatible (=) — works in sh, bash, zsh, dash
-if [ $user_group = "admin" ]; then
-    echo "Access granted."
-fi
-
-# Check if a string is empty
-name=""
-if [ -z "$name" ]; then
-    echo "Name was not provided."
+if [ "$user_group" == "admin" ]; then
+    echo "Welcome, Administrator."
+elif [ "$user_group" = "devops" ]; then
+    echo "Welcome, DevOps Engineer."
+else
+    echo "Access denied. Unknown group: $user_group"
 fi
 ```
 
-> **`=` vs `==`:**
-> - `==` is **Bash-specific** — only works in Bash scripts
-> - `=` is **POSIX standard** — cross-compatible with all shell programs (`sh`, `dash`, `zsh`)
-> - If your script uses `#!/bin/bash`, either works. If you use `#!/bin/sh`, always use `=`
+### `=` vs `==` — Which to Use?
 
-### Double Brackets `[[ ]]` — Bash Extended Syntax
-
-```bash
-# Double brackets allow more flexible comparisons in Bash
-if [[ $user_group == "admin" || $user_group == "sudo" ]]; then
-    echo "Privileged user."
-fi
 ```
+=    →  POSIX standard. Works in sh, bash, zsh, dash — ALL shells.
+==   →  Bash-specific. Only guaranteed to work in bash scripts.
 
-> **`[ ]` vs `[[ ]]`:**
-> - `[ ]` → POSIX standard, portable across all shells
-> - `[[ ]]` → Bash-only, supports `&&`, `||`, regex matching, and no quoting issues
-> - Use `[[ ]]` for simpler, more readable Bash scripts; use `[ ]` when portability matters
+Rule: Use = for portability.
+      Use == only when your script will always run in bash.
+```
 
 ---
 
@@ -249,142 +228,157 @@ fi
 Pass values directly when running the script:
 
 ```bash
-./setup.sh admin /etc/config
+./setup.sh admin config.yaml
 ```
 
-Inside the script, access them with positional parameters:
+Inside the script:
 
 ```bash
 #!/bin/bash
 
-user_group=$1      # First argument:  admin
-config_path=$2     # Second argument: /etc/config
+user_group=$1       # First argument:  admin
+config_file=$2      # Second argument: config.yaml
 
-echo "Setting up user group: $user_group"
-echo "Using config at: $config_path"
+echo "Group:  $user_group"
+echo "Config: $config_file"
 ```
 
 ### Method 2 — Interactive Prompt with `read`
 
-Prompt the user for input while the script is running:
+Ask the user to enter a value while the script is running:
 
 ```bash
 #!/bin/bash
 
-# Basic read
-read -p "Enter username: " username
-echo "Hello, $username!"
+# -p displays the prompt message inline
+read -p "Enter your username: " username
+read -p "Enter your group: "    user_group
 
-# Silent read — hides input (ideal for passwords)
+# -s flag makes input silent — hides what the user types (for passwords)
 read -sp "Enter password: " user_pwd
-echo ""    # Print newline after hidden input
-echo "Password stored securely."
+echo ""   # newline after hidden input
 
-# Read with a timeout (waits 10 seconds, then continues)
-read -t 10 -p "Enter choice (you have 10s): " choice
+echo "Hello $username, group: $user_group"
 ```
 
-| Flag | Meaning |
-|------|---------|
-| `-p` | Display a prompt message |
-| `-s` | Silent mode — hides typed input (for passwords) |
-| `-t` | Timeout in seconds |
-| `-n` | Read only N characters |
+> Always use `-s` for password input so the characters are not echoed to the screen.
 
 ---
 
 ## 7. Positional Parameters
 
-Positional parameters let scripts accept and process multiple inputs passed as arguments.
+Positional parameters are the arguments passed to a script, accessed by their position number:
 
-| Parameter | Value |
-|-----------|-------|
-| `$0` | The script name itself |
-| `$1` – `$9` | Individual arguments (1st through 9th) |
+| Variable | Value |
+|----------|-------|
+| `$0` | The script name itself (`./setup.sh`) |
+| `$1` | First argument |
+| `$2` | Second argument |
+| `$3` ... `$9` | Third through ninth arguments |
 | `$*` | All arguments as a single string |
-| `$@` | All arguments as a list (better for looping) |
-| `$#` | Total **count** of arguments passed |
-| `$?` | Exit code of the **last executed command** (`0` = success) |
+| `$@` | All arguments as separate items (better for loops) |
+| `$#` | Count of total arguments passed |
 
 ```bash
 #!/bin/bash
 
-echo "Script name:        $0"
-echo "First argument:     $1"
-echo "Second argument:    $2"
-echo "All arguments:      $*"
-echo "Number of args:     $#"
+echo "Script name:      $0"
+echo "First argument:   $1"
+echo "Second argument:  $2"
+echo "Total arguments:  $#"
+echo "All arguments:    $*"
 ```
 
-**Run it:**
+**Run:**
 ```bash
 ./setup.sh admin devops 8080
-# Output:
-# Script name:        ./setup.sh
-# First argument:     admin
-# Second argument:    devops
-# All arguments:      admin devops 8080
-# Number of args:     3
+```
+
+**Output:**
+```
+Script name:      ./setup.sh
+First argument:   admin
+Second argument:  devops
+Total arguments:  3
+All arguments:    admin devops 8080
 ```
 
 ---
 
-## 8. Loops
+## 8. Loops in Shell Scripts
 
-Shell scripting supports four types of loops:
+### Types of Loops
+
+| Loop | Use Case |
+|------|---------|
+| `for` | Iterate over a known list or range |
+| `while` | Repeat while a condition is true |
+| `until` | Repeat until a condition becomes true |
+| `select` | Generate a numbered menu for user selection |
+
+---
 
 ### `for` Loop
 
-Best for iterating over a known list or all arguments:
-
 ```bash
-#!/bin/bash
-
-# Loop over a fixed list
-for package in git curl wget vim; do
-    echo "Installing $package..."
-    sudo apt install -y $package
+# Loop over a static list
+for user in alice bob carol dave; do
+    echo "Creating user: $user"
+    sudo adduser $user
 done
 
 # Loop over all script arguments using $*
 for param in $*; do
-    echo "Processing parameter: $param"
+    echo "Parameter: $param"
+done
+
+# Loop over a number range
+for i in {1..5}; do
+    echo "Attempt $i"
 done
 ```
 
+---
+
 ### `while` Loop
 
-Runs as long as a condition is **true**:
+Repeats as long as the condition is true:
 
 ```bash
 #!/bin/bash
 
-# Score accumulator — exits when user types 'q'
+# Interactive score accumulator — keeps running until user types 'q'
 sum=0
 
 while true; do
     read -p "Enter a score (or 'q' to quit): " score
 
-    if [ "$score" == "q" ]; then
+    if [ "$score" = "q" ]; then
         echo "Quitting the loop."
         break
     fi
 
     sum=$(( sum + score ))
+    echo "Running total: $sum"
 done
 
 echo "Total score: $sum"
 ```
 
-> **Arithmetic in shell scripts** uses double parentheses with `$`:
-> ```bash
-> result=$(( 5 + 3 ))     # result = 8
-> sum=$(( sum + score ))  # increment sum
-> ```
+**Key syntax:**
+
+| Keyword | Purpose |
+|---------|---------|
+| `while true` | Runs forever until explicitly stopped |
+| `break` | Immediately exits the loop |
+| `continue` | Skips current iteration, goes to next |
+| `$(( expr ))` | Arithmetic evaluation |
+
+---
 
 ### `until` Loop
 
-The opposite of `while` — runs as long as a condition is **false**:
+The opposite of `while` — repeats until the condition becomes true:
 
 ```bash
 #!/bin/bash
@@ -397,39 +391,52 @@ until [ $count -gt 5 ]; do
 done
 ```
 
-### `select` Loop
+---
 
-Generates an interactive numbered menu for the user:
+### `select` Loop — Interactive Menu
+
+Automatically generates a numbered menu from a list:
 
 ```bash
 #!/bin/bash
 
-echo "Choose an option:"
-select option in "Install Nginx" "Install MySQL" "Quit"; do
-    case $option in
+echo "Select an action:"
+select action in "Install Nginx" "Install MySQL" "Check Status" "Quit"; do
+    case $action in
         "Install Nginx")
-            sudo apt install -y nginx
-            ;;
+            sudo apt install -y nginx ;;
         "Install MySQL")
-            sudo apt install -y mysql-server
-            ;;
+            sudo apt install -y mysql-server ;;
+        "Check Status")
+            systemctl status nginx ;;
         "Quit")
             echo "Exiting."
-            break
-            ;;
+            break ;;
         *)
-            echo "Invalid option."
-            ;;
+            echo "Invalid option. Try again." ;;
     esac
 done
 ```
 
-### Loop Control
+---
 
-| Command | Action |
-|---------|--------|
-| `break` | Exit the loop immediately |
-| `continue` | Skip the current iteration and move to the next |
+### Arithmetic in Shell Scripts
+
+Use double parentheses `$(( ))` for all arithmetic:
+
+```bash
+a=10
+b=3
+
+echo $(( a + b ))   # 13 — addition
+echo $(( a - b ))   # 7  — subtraction
+echo $(( a * b ))   # 30 — multiplication
+echo $(( a / b ))   # 3  — integer division
+echo $(( a % b ))   # 1  — remainder (modulo)
+
+# Increment a variable
+count=$(( count + 1 ))
+```
 
 ---
 
@@ -442,190 +449,247 @@ done
 
 # Define a function
 greet_user() {
-    echo "Hello, $1! Welcome to the system."
+    echo "Hello, $1! Welcome to the $2 team."
 }
 
-# Call the function
-greet_user "Hammad"
-greet_user "Alice"
+# Call the function with arguments
+greet_user "Alice" "DevOps"
+greet_user "Bob"   "Backend"
 ```
 
-### Returning Values from Functions
+### Returning Values — Using `return` and `$?`
 
-Shell functions can only `return` an **integer exit code (0–255)**. To capture this value, use the special variable `$?` immediately after calling the function.
+Shell functions can only `return` an integer (0–255). The special variable `$?` captures the return value of the last executed command:
 
 ```bash
 #!/bin/bash
 
-function sum() {
+sum() {
     total=$(( $1 + $2 ))
     return $total
 }
 
-# Call the function with arguments
 sum 1 32
-
-# $? captures the return value of the last executed command
 result=$?
-echo "Result: $result"
+echo "Result: $result"   # 33
 ```
 
-> **Important limitation:** `return` in shell functions only supports integers `0–255`. For larger numbers or strings, use `echo` instead and capture with `$( )`:
+### Better Approach — Return via `echo`
+
+For values larger than 255 or strings, use `echo` inside the function and capture with `$()`:
 
 ```bash
 #!/bin/bash
 
-# Better pattern — use echo to "return" any value
-calculate_sum() {
+sum() {
     echo $(( $1 + $2 ))
 }
 
-# Capture the echoed output
-result=$(calculate_sum 50 200)
-echo "Sum is: $result"    # Sum is: 250
+result=$(sum 100 250)
+echo "Result: $result"   # 350
 ```
 
-| Method | Limitation | Best For |
-|--------|-----------|---------|
-| `return $value` + `$?` | Integer 0–255 only | Exit codes, status flags |
-| `echo $value` + `$(func)` | Any value (strings, large numbers) | Actual computed results |
+### Exit Codes
+
+Every command exits with a numeric code:
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success |
+| `1` | General error |
+| `2` | Misuse of shell command |
+| `127` | Command not found |
+
+```bash
+# Check if the last command succeeded
+if [ $? -eq 0 ]; then
+    echo "Command succeeded."
+else
+    echo "Command failed."
+fi
+```
 
 ---
 
-## 10. Putting It All Together — Real Example
+## 10. Double Brackets & Portability
 
-A complete script that uses variables, conditions, arguments, loops, and functions:
+Bash offers `[[ ]]` as an enhanced alternative to `[ ]`:
+
+| Feature | `[ ]` | `[[ ]]` |
+|---------|-------|---------|
+| Works in all shells (portable) | Yes | No — Bash only |
+| Pattern matching with `*` | No | Yes |
+| Regex matching with `=~` | No | Yes |
+| Safe without quoting variables | No | Yes |
+| AND/OR with `&&` and `||` inside | No | Yes |
+
+```bash
+# Pattern matching
+if [[ "$filename" == *.sh ]]; then
+    echo "This is a shell script."
+fi
+
+# Regex matching
+if [[ "$email" =~ ^[a-z]+@[a-z]+\.[a-z]+$ ]]; then
+    echo "Valid email format."
+fi
+```
+
+### Portability Rule
+
+```
+[ ]   →  Use for portable scripts compatible with all shells (sh, bash, dash)
+[[ ]] →  Use when writing bash-only scripts needing pattern or regex matching
+
+For complex scripting needs, consider Python or Ansible —
+they offer cleaner syntax, better error handling, and far more power.
+```
+
+---
+
+## 11. Complete Example Script
+
+A script combining all concepts from this lesson:
 
 ```bash
 #!/bin/bash
 # =============================================================
-# User Setup Script
-# Usage: ./user_setup.sh <username> <group>
+# User Provisioning Script
+# Usage: ./setup.sh <group> <username1> <username2> ...
+# Example: ./setup.sh devops alice bob carol
 # =============================================================
+set -e
 
-set -e    # Exit immediately on error
+GROUP=$1
 
-# --- Validate Arguments ---
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <username> <group>"
+# --- Validate input ---
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <group> <username1> [username2] ..."
     exit 1
 fi
 
-USERNAME=$1
-GROUP=$2
-
 # --- Functions ---
+log() {
+    echo "[$(date '+%H:%M:%S')] $1"
+}
+
 create_user() {
-    if id "$1" &>/dev/null; then
-        echo "User '$1' already exists. Skipping."
+    local username=$1
+
+    if id "$username" &>/dev/null; then
+        log "User $username already exists. Skipping."
     else
-        sudo adduser --disabled-password --gecos "" $1
-        echo "User '$1' created."
+        sudo adduser --disabled-password --gecos "" "$username"
+        sudo usermod -aG "$GROUP" "$username"
+        log "User $username created and added to group $GROUP."
     fi
 }
 
-assign_group() {
-    sudo usermod -aG $2 $1
-    echo "User '$1' added to group '$2'."
-}
+# --- Check if group exists ---
+if ! getent group "$GROUP" > /dev/null; then
+    log "Group $GROUP not found. Creating it..."
+    sudo groupadd "$GROUP"
+fi
 
-log_result() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> setup.log
-}
-
-# --- Main ---
-echo "Starting user setup..."
-
-create_user $USERNAME
-assign_group $USERNAME $GROUP
-
-# Loop through any extra groups passed as additional args
-for extra_group in "${@:3}"; do
-    assign_group $USERNAME $extra_group
+# --- Loop through all usernames (skip first arg which is the group) ---
+shift
+for username in $@; do
+    create_user "$username"
 done
 
-log_result "Setup complete for user: $USERNAME"
-echo "Done! Check setup.log for details."
+log "Total users processed: $#"
+log "All done!"
 ```
 
-**Run it:**
+**Run:**
 ```bash
-chmod u+x user_setup.sh
-./user_setup.sh hammad devops sudo docker
+chmod u+x setup.sh
+./setup.sh devops alice bob carol
 ```
 
 ---
 
-## 11. Quick Reference Cheat Sheet
+## 12. Quick Reference Cheat Sheet
 
 ### Variables
 
 ```bash
-name="value"              # Assign variable
-echo $name                # Use variable
+name="alice"              # Declare (no spaces around =)
+echo "$name"              # Use with $ sign
 result=$(command)         # Capture command output
-result=$(( 5 + 3 ))       # Arithmetic expression
+sum=$(( 5 + 3 ))          # Arithmetic with $(( ))
 ```
 
 ### Conditionals
 
 ```bash
-if [ condition ]; then    # Open
-    # ...
-elif [ condition ]; then  # Optional
-    # ...
-else                      # Optional
-    # ...
-fi                        # Close
+if [ condition ]; then
+    ...
+elif [ condition ]; then
+    ...
+else
+    ...
+fi
 ```
 
-### Test Operators
+### File Test Operators
 
-| Type | Operators |
-|------|-----------|
-| Files | `-f` `-d` `-e` `-r` `-w` `-x` `-s` |
-| Numbers | `-eq` `-ne` `-lt` `-le` `-gt` `-ge` |
-| Strings | `=` `==` `!=` `-z` `-n` |
+| Op | Check |
+|----|-------|
+| `-f` | Is a regular file |
+| `-d` | Is a directory |
+| `-e` | Exists |
+| `-x` | Is executable |
+| `-z` | Is empty |
+| `!` | Negate any condition |
+
+### Number Comparison
+
+| Op | Meaning |
+|----|---------|
+| `-eq` | Equal |
+| `-ne` | Not equal |
+| `-lt` | Less than |
+| `-gt` | Greater than |
+| `-ge` | Greater or equal |
+| `-le` | Less or equal |
 
 ### Loops
 
 ```bash
-for item in $*; do        # For loop over all args
-    echo $item
+for item in $@; do
+    echo "$item"
 done
 
-while [ condition ]; do   # While loop
-    # ...
+while [ condition ]; do
+    ...
 done
 
-until [ condition ]; do   # Until loop (opposite of while)
-    # ...
+until [ condition ]; do
+    ...
 done
 ```
-
-### Positional Parameters
-
-| Variable | Meaning |
-|----------|---------|
-| `$1`–`$9` | Individual arguments |
-| `$*` | All arguments |
-| `$#` | Argument count |
-| `$?` | Last command exit code |
-| `$0` | Script name |
 
 ### Functions
 
 ```bash
-my_function() {
-    echo $(( $1 + $2 ))   # Return via echo (any value)
+my_func() {
+    echo $(( $1 + $2 ))    # return via echo
 }
-result=$(my_function 10 20)
-
-# Or return integer exit code (0-255 only)
-my_function() { return 42; }
-my_function
-echo $?
+result=$(my_func 5 10)     # capture output
+echo $?                    # get exit/return code
 ```
+
+### Special Variables
+
+| Variable | Meaning |
+|----------|---------|
+| `$0` | Script name |
+| `$1`–`$9` | Positional arguments |
+| `$#` | Argument count |
+| `$*` | All arguments as string |
+| `$@` | All arguments as list |
+| `$?` | Last command exit code |
 
 ---
 
