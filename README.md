@@ -1,26 +1,38 @@
-#!/bin/bash
-echo "This is the README test file."
+# 🐧 Linux & Shell Scripting — Complete Lecture Notes
 
+> A structured collection of Linux fundamentals, shell scripting, and DevOps essentials.
+> Each lesson includes explanations, diagrams, command references, and real-world examples.
 
-# DevOps & Infrastructure Learning Roadmap
+---
 
-Welcome to my DevOps learning repository. Below is the structured index of all lectures and documentation.
+## 📚 Table of Contents
 
-## 📚 Lecture Notes
+| # | Topic |
+|---|-------|
+| 01 | [DevOps Introduction](./Lesson-01.md) |
+| 02 | [Lab Setup](./Lesson-02.md) |
+| 03 | [SSH](./SSH.md) |
+| 04 | [Linux Administration & Core Networking](./Lesson-03.md) |
+| 05 | [Operating System Architecture & Kernel Mechanics](./Lesson-04.md) |
+| 06 | [Virtualization Architectures](./Lesson-05.md) |
+| 07 | [VirtualBox Installation and Setup](./Lesson-06.md) |
+| 08 | [Linux File System](./Lesson-07.md) |
+| 09 | [The Linux CLI and System Administration](./Lesson-08.md) |
+| 10 | [Package Management — APT, Snap & PPAs](./Lesson-09.md) |
+| 11 | [Vi & Vim Text Editing](./Lesson-10.md) |
+| 12 | [Users & Permissions in Linux](./Lesson-12.md) |
+| 13 | [Linux File Permissions](./Lesson-13.md) |
+| 14 | [Pipes & Redirects in Linux](./Lesson-14.md) |
+| 15 | [Introduction to Shell Scripting](./Lesson-15.md) |
 
-* [Lecture 1: DevOps Introduction](./Lesson-01.md)
-* [Lecture 2: Lab Setup](./Lesson-02.md)
-* [Lecture 3: SSH](./SSH.md)
-* [Lecture 4: Linux Administration & Core Networking](./Lesson-03.md)
-* [Lecture 5: Operating System (OS) Architecture & Kernel Mechanics](./Lesson-04.md)
-* [Lecture 6: Virtualization Architectures](./Lesson-05.md)
-* [Lecture 7: VirtualBox installation and setup](./Lesson-06.md)
-* [Lecture 8: Linux file System](./Lesson-7.md)
-* [Lecture 9: The Linux CLI and System Administration](./Lesson-8.md)
-* [Lecture 10: Package Management](./Lesson-09.md)
-* [Lecture 11: Vi & Vim Text Editing](./Lesson-10.md)
-* [Lecture 12: Users & Permissions in Linux](./Lesson-12.md)
-* [Lecture 13: Linux File Permissions](./Lesson-13.md)
-* [Lecture 14: Pipes & Redirects in Linux](./Lesson-14.md)
-* [Lecture 15: Introduction to Shell Scripting](./Lesson-15.md)
-* *Next lectures will be added here...*
+---
+
+## 🗂️ How to Use These Notes
+
+- Each file is a standalone lesson — open any topic directly.
+- Lessons build on each other, so reading in order is recommended for beginners.
+- Every lesson includes a Quick Reference Cheat Sheet at the end for fast lookups.
+
+---
+
+*Notes are continuously updated. More lessons coming soon.*
