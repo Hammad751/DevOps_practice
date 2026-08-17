@@ -24,6 +24,15 @@
 | 13 | [Linux File Permissions](./Lesson-13.md) |
 | 14 | [Pipes & Redirects in Linux](./Lesson-14.md) |
 | 15 | [Introduction to Shell Scripting](./Lesson-15.md) |
+| 16 | [Shell Scripting II](./Lesson-16.md) |
+| 17 | [Environment Variables](./Lesson-17.md) |
+| 18 | [Networking Basics for DevOps Engineers](./Lesson-18.md) |
+| 19 | [IaaS — Infrastructure as a Service & Secure Server Setup](./Lesson-19.md) |
+| 20 | [IaaS — Infrastructure as a Service & Secure Server Setup](./Lesson-20.md) |
+| 21 | [Git for DevOps Engineers](./Lesson-21.md) |
+| 22 | [Databases in the Software Development Process](./Lesson-22.md) |
+| 25 | [WSL2 Migration & Solana/Anchor Development Environment Setup](./Lesson-25.md) |
+| 26 | [WSL2 Lab — Windows Subsystem for Linux 2](./Lesson-26.md) |
 
 ---
 
