@@ -31,6 +31,8 @@
 | 20 | [IaaS — Infrastructure as a Service & Secure Server Setup](./Lesson-20.md) |
 | 21 | [Git for DevOps Engineers](./Lesson-21.md) |
 | 22 | [Databases in the Software Development Process](./Lesson-22.md) |
+| 23 | [Creating & Managing Linux Users — DevOps Best Practices](./Lesson-23.md) |
+| 24 | [Artifact Repository Manager with Nexus](./Lesson-24.md) |
 | 25 | [WSL2 Migration & Solana/Anchor Development Environment Setup](./Lesson-25.md) |
 | 26 | [WSL2 Lab — Windows Subsystem for Linux 2](./Lesson-26.md) |
 
